@@ -1,0 +1,14 @@
+# Local Terraform files
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+terraform.tfvars
+
+# Crash logs
+crash.log
+*.tfplan
+
+# macOS and editor files
+.DS_Store
+*.swp
+*.swo
