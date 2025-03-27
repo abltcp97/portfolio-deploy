@@ -49,6 +49,23 @@ resource "aws_dynamodb_table" "terraform_lock" { #Prevents another instance of t
   
 }
 
+resource "aws_dynamodb_table" "visitor_count" {
+  name = "visitor-count"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key = "id"
+
+  attribute {
+    name = "id"
+    type = "S"
+  }
+
+  tags = {
+  Name = "visitor-count"
+  Environment = "prod"
+  }
+  
+}
+
 resource "aws_cloudfront_origin_access_control" "oac" {
     name = "terraform-portfolio-oac"
     description = "OAC for secure s3 access"
@@ -120,3 +137,78 @@ resource "aws_s3_bucket_policy" "allow_cloudfront" {
     })
   
 }
+
+resource "aws_lambda_function" "visitor_count" {
+  function_name = "visitor-counter-lambda"
+  role = aws_iam_role.lambda_exec.arn
+  handler = "lambda_function.lambda_handler"
+  runtime = "python3.11"
+  timeout = 5
+
+  filename = "${path.module}/lambda.zip"
+  source_code_hash = filebase64sha256("${path.module}/lambda.zip")
+
+  environment {
+    variables = {
+      TABLE_NAME = aws_dynamodb_table.visitor_count.name
+    }
+  }
+
+  depends_on = [aws_iam_role_policy_attachment.lambda_policy_attach]
+
+}
+
+resource "aws_iam_role" "lambda_exec" {
+  name = "lambda-exec-role"
+
+  assume_role_policy = jsonencode({
+      Version = "2012-10-17",
+      Statement = [{
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+      }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_policy_attach" {
+  role = aws_iam_role.lambda_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+}
+
+#################### Exposing Lambda via API Gateway ####################################
+resource "aws_apigatewayv2_api" "visitor_api" { # Creating HTTP API and will be our root public API. 
+  name = "VisitorAPI"
+  protocol_type = "HTTP"
+}
+
+resource "aws_apigatewayv2_integration" "lambda_integration" { #Linking Lambda function to API Gateway
+  api_id = aws_apigatewayv2_api.visitor_api.id
+  integration_type = "AWS_PROXY" #Send http request as is to Lambda
+  integration_uri = aws_lambda_function.visitor_count.invoke_arn #Invoke ARN to tell API where to send request
+  integration_method = "POST"
+  payload_format_version = "2.0"
+}
+
+resource "aws_apigatewayv2_route" "visitor_route" { #Defines route and tells API to trigger lambda
+  api_id = aws_apigatewayv2_api.visitor_api.id
+  route_key = "GET /visits"
+  target = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
+
+resource "aws_apigatewayv2_stage" "api_stage" { # creating prod staging
+  api_id = aws_apigatewayv2_api.visitor_api.id
+  name = "$default"
+  auto_deploy = true #allows changes to go live instantly
+}
+
+resource "aws_lambda_permission" "allow_apigw" { #grant permission to API to invoke lambda
+  statement_id = "AllowAPIGatewayInvoke"
+  action = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.visitor_count.function_name
+  principal = "apigateway.amazonaws.com"
+  source_arn = "${aws_apigatewayv2_api.visitor_api.execution_arn}/*/*" #limit permission to only this arn
+}
+################################ END ################################################

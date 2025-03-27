@@ -12,3 +12,6 @@ crash.log
 .DS_Store
 *.swp
 *.swo
+
+#lambda files
+lambda.zip
