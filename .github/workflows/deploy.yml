@@ -25,6 +25,11 @@ jobs:
       with:
         terraform_version: 1.6.6
 
+    - name: Zip Lambda Function
+      run: |
+        cd lambda
+        zip ../lambda.zip lambda_function.py
+
     - name: Terraform Init
       run: terraform init
 
