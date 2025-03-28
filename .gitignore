@@ -3,6 +3,7 @@
 terraform.tfstate
 terraform.tfstate.backup
 terraform.tfvars
+*.tfvars
 
 # Crash logs
 crash.log
@@ -15,3 +16,19 @@ crash.log
 
 #lambda files
 lambda.zip
+
+#Python virtrual environment
+.venv/
+
+#Compiled Python File Crap
+tests/__pycache__/
+tests/__pycache__/lambda_function.cpython-313.pyc
+tests/*.py[cod]
+tests/.pytest_cache/
+lambda/__pycache__/
+#pytest cache
+tests/.pytest_cache
+
+
+#VSCode
+.vscode/
