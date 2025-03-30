@@ -14,6 +14,12 @@ class MockTable:
         self.put_called_with = Item
         self.visits = Item["Visits"]
 
+    def test_get_and_increment_visits_from_existing():
+        table = MockTable(4)
+        result = get_and_increment_visits(table)
+        assert result == 5
+        assert table.put_called_with == {"id": "visitor-counter", "visits": 5}
+
     def test_get_and_increment_visits_from_zero():
         table = MockTable(None)
         result = get_and_increment_visits(table)
