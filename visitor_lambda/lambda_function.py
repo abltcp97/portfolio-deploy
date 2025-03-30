@@ -7,7 +7,7 @@ def get_and_increment_visits(table):
     visits = response.get('Item',{}).get('visits', 0) + 1
    
 
-    table.put_item(Item={'id': 'visitor-counter', 'visit': visits})
+    table.put_item(Item={'id': 'visitor-counter', 'visits': visits})
     return visits
 
 def lambda_handler(event,context):

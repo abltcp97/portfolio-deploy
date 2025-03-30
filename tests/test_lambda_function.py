@@ -12,16 +12,16 @@ class MockTable:
     
     def put_item(self,Item):
         self.put_called_with = Item
-        self.visits = Item["Visits"]
+        self.visits = Item["visits"]
 
-    def test_get_and_increment_visits_from_existing():
-        table = MockTable(4)
-        result = get_and_increment_visits(table)
-        assert result == 5
-        assert table.put_called_with == {"id": "visitor-counter", "visits": 5}
+def test_get_and_increment_visits_from_existing():
+    table = MockTable(4)
+    result = get_and_increment_visits(table)
+    assert result == 5
+    assert table.put_called_with == {"id": "visitor-counter", "visits": 5}
 
-    def test_get_and_increment_visits_from_zero():
-        table = MockTable(None)
-        result = get_and_increment_visits(table)
-        assert result == 1
-        assert table.put_called_with == {"id":"visitor-counter", "visits": 1}
+def test_get_and_increment_visits_from_zero():
+    table = MockTable(None)
+    result = get_and_increment_visits(table)
+    assert result == 1
+    assert table.put_called_with == {"id":"visitor-counter", "visits": 1}
