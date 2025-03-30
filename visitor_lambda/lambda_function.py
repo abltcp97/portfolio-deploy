@@ -1,18 +1,20 @@
 import boto3
 import os
 
-TABLE_NAME = os.environ['TABLE_NAME']
-dynamodb = boto3.resource("dynamodb")
-table = dynamodb.Table(TABLE_NAME)
-
-def lambda_handler(event, context):
+def get_and_increment_visits(table):
     # Gets current # of vistors
     response = table.get_item(Key={'id':'visitor-counter'})
-    current = response.get('Item',{}).get('visits', 0)
+    visits = response.get('Item',{}).get('visits', 0) + 1
+   
 
-    #Increment the count and update
-    new_count = current + 1
-    table.put_item(Item={'id': 'visitor-counter', 'visits': new_count})
+    table.put_item(Item={'id': 'visitor-counter', 'visit': visits})
+    return visits
+
+def lambda_handler(event,context):
+    dynamodb = boto3.resource("dynamodb")
+    table = dynamodb.Table(os.environ["TABLE_NAME"])
+    visits = get_and_increment_visits(table)
+    return str(visits)
 
     # API gateway expects this format of response and we return the new visitor count
     return {
