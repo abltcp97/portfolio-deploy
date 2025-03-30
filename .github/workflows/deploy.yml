@@ -24,9 +24,10 @@ jobs:
         pip install boto3 pytest
 
     - name: Run Python Tests
-      run: |
-        PYTHONPATH=. pytest
-        
+      env:
+        PYTHONPATH: ${{ github.workspace }}
+      run: pytest
+
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
