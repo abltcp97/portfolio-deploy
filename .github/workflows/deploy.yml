@@ -42,7 +42,7 @@ jobs:
 
     - name: Zip Lambda Function
       run: |
-        cd lambda
+        cd visitor_lambda
         zip ../lambda.zip lambda_function.py
 
     - name: Terraform Init
