@@ -3,7 +3,7 @@ terraform { # Storing terraform state in S3 bucket
     bucket = "aalamillo-terraform-state" #stores it in this S3 Bucket
     key = "terraform.tfstate" #name of the state file
     region = "us-east-1" # Keep it in the region I selected
-    dynamodb_table = "terraform-lock" # turns on state locking to prevnt conflicts
+    dynamodb_table = "terraform-lock" # turns on state locking to prevent conflicts
     encrypt = true #Encrypts the file at rest in S3
   }
 }
@@ -76,8 +76,8 @@ resource "aws_cloudfront_origin_access_control" "oac" {
 
 resource "aws_cloudfront_distribution" "portfolio" {
     origin {
-      domain_name = aws_s3_bucket.terraform_state.bucket_regional_domain_name
-      origin_id = "S3PortfolioOrigin"
+      domain_name = aws_s3_bucket.portfolio_site.bucket_regional_domain_name
+      origin_id = "S3PortfolioSiteOrigin"
       origin_access_control_id = aws_cloudfront_origin_access_control.oac.id
     }
     enabled = true
