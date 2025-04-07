@@ -8,6 +8,16 @@ resource "aws_s3_bucket" "portfolio_site" {
   }
 }
 
+resource "aws_s3_bucket_public_access_block" "portfolio_site" {
+  bucket = aws_s3_bucket.portfolio_site.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+
 resource "aws_s3_bucket_website_configuration" "portfolio_site" {
   bucket = aws_s3_bucket.portfolio_site.id
 

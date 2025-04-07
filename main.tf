@@ -86,7 +86,7 @@ resource "aws_cloudfront_distribution" "portfolio" {
     aliases = ["portfolio.aalamillo.com"] # custom domain
 
     default_cache_behavior { #Tells cloudfront how to handle requests
-      target_origin_id = "S3PortfolioOrigin"
+      target_origin_id = "S3PortfolioSiteOrigin"
       viewer_protocol_policy = "redirect-to-https"
       allowed_methods = ["GET","HEAD"] # Only allowing Get and Head for security reasons
       cached_methods = ["GET","HEAD"]
