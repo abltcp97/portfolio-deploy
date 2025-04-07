@@ -13,12 +13,17 @@ def get_and_increment_visits(table):
 def lambda_handler(event,context):
     dynamodb = boto3.resource("dynamodb")
     table = dynamodb.Table(os.environ["TABLE_NAME"])
-    visits = get_and_increment_visits(table)
-    return str(visits)
+    new_count = get_and_increment_visits(table)
 
     # API gateway expects this format of response and we return the new visitor count
     return {
-        'statusCode': 200,
-        'headers': {'Content-Type': 'applications/json'},
-        'body': str(new_count)
-    }
+    "statusCode": 200,
+    "headers": {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "https://portfolio.aalamillo.com",
+        "Access-Control-Allow-Methods": "GET",
+        "Access-Control-Allow-Headers": "*"
+    },
+    "body": str(new_count)
+}
+
