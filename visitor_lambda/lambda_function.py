@@ -20,7 +20,7 @@ def lambda_handler(event,context):
     "statusCode": 200,
     "headers": {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "https://portfolio.aalamillo.com",
+        "Access-Control-Allow-Origin": "https://aalamillo.com",
         "Access-Control-Allow-Methods": "GET",
         "Access-Control-Allow-Headers": "*"
     },
