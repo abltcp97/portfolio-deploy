@@ -83,7 +83,7 @@ resource "aws_cloudfront_distribution" "portfolio" {
     enabled = true
     default_root_object = "index.html" #ensures the main page loads
 
-    aliases = ["portfolio.aalamillo.com"] # custom domain
+    aliases = ["aalamillo.com"] # custom domain
 
     default_cache_behavior { #Tells cloudfront how to handle requests
       target_origin_id = "S3PortfolioSiteOrigin"
