@@ -98,6 +98,11 @@ resource "aws_cloudfront_distribution" "portfolio" {
         }
       }
 
+      function_association {
+        event_type = "viewer-request"
+        function_arn = aws_cloudfront_function.www_redirect
+      }
+
       min_ttl =  3600 # 1 Hour Minimum
       default_ttl = 86400 # 1 day Default
       max_ttl = 604800 # 7 days max
