@@ -21,6 +21,7 @@ def lambda_handler(event,context):
     "headers": {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "https://aalamillo.com",
+        "Access-Control-Allow-Origin": "https://www.aalamillo.com",
         "Access-Control-Allow-Methods": "GET",
         "Access-Control-Allow-Headers": "*"
     },
