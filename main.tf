@@ -83,7 +83,7 @@ resource "aws_cloudfront_distribution" "portfolio" {
     enabled = true
     default_root_object = "index.html" #ensures the main page loads
 
-    aliases = ["aalamillo.com","www.aalamillo.com"] # custom domain
+    aliases = ["aalamillo.com"] # custom domain
 
     default_cache_behavior { #Tells cloudfront how to handle requests
       target_origin_id = "S3PortfolioSiteOrigin"
@@ -114,6 +114,32 @@ resource "aws_cloudfront_distribution" "portfolio" {
     }  
 }
 
+resource "aws_cloudfront_function" "www_redirect" {
+  name    = "redirect-www-to-root"
+  runtime = "cloudfront-js-1.0"
+  comment = "Redirect www.aalamillo.com to aalamillo.com"
+
+  code = <<EOT
+function handler(event) {
+    var request = event.request;
+    var headers = request.headers;
+
+    if (headers.host && headers.host.value === 'www.aalamillo.com') {
+        return {
+            statusCode: 301,
+            statusDescription: 'Moved Permanently',
+            headers: {
+                "location": {
+                    "value": 'https://aalamillo.com' + request.uri
+                }
+            }
+        };
+    }
+
+    return request;
+}
+EOT
+}
 resource "aws_s3_bucket_policy" "allow_cloudfront" {
     bucket = aws_s3_bucket.terraform_state.id
 
