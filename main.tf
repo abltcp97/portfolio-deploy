@@ -100,7 +100,7 @@ resource "aws_cloudfront_distribution" "portfolio" {
 
       function_association {
         event_type = "viewer-request"
-        function_arn = aws_cloudfront_function.www_redirect
+        function_arn = aws_cloudfront_function.www_redirect.arn
       }
 
       min_ttl =  3600 # 1 Hour Minimum
